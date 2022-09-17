@@ -80,6 +80,7 @@ DB_PORT=5432 # порт для подключения к БД
 - Создайте суперпользователя Django `sudo docker-compose exec yamdb python manage.py createsuperuser --username admin --email 'admin@yamdb.com'`
 - Загрузите данные в базу данных при необходимости `sudo docker-compose exec yamdb python manage.py loaddata data/fixtures.json`
 ## Деплой на удаленный сервер
+
 Для запуска проекта на удаленном сервере необходимо:
 - скопировать на сервер файлы `docker-compose.yaml`, `.env` и папку `nginx` командами:
 ```
@@ -88,6 +89,9 @@ scp .env <user>@<server-ip>:
 scp -r nginx/ <user>@<server-ip>:
 
 ```
+
+- Для работы с проектом на удаленном сервере должен быть установлен Docker и [docker-compose](https://docs.docker.com/engine/install/ubuntu/).
+
 - создать переменные окружения в разделе `secrets` настроек текущего репозитория:
 ```
 DOCKER_PASSWORD # Пароль от Docker Hub
@@ -99,6 +103,17 @@ SSH_KEY # Приватный ssh-ключ
 TELEGRAM_TO # ID телеграм-аккаунта
 TELEGRAM_TOKEN # Токен бота
 ```
+
+### Подготовка репозитория на GitHub
+
+Для использования Continuous Integration и Continuous Deployment необходимо в репозитории на GitHub прописать Secrets - переменные доступа к вашим сервисам.
+Переменые прописаны в workflows/yamdb_workflow.yaml
+
+* DOCKER_PASSWORD, DOCKER_USERNAME, DOCKER_REPOSITORY - для загрузки и скачивания образа с репозитория DockerHub 
+* DB_ENGINE, DB_HOST, DB_NAME, DB_PORT, POSTGRES_PASSWORD, POSTGRES_USER - для подключения к базе данных 
+* SECRET_KEY проекта
+* SSH_KEY, USER, HOST, PASSPHRASE, SSH_KEY - для подключения к удаленному серверу 
+* TELEGRAM_TO, TELEGRAM_TOKEN - для отправки сообщений в Telegram
 
 ### После каждого обновления репозитория (`git push`) будет происходить:
 1. Проверка кода на соответствие стандарту PEP8 (с помощью пакета flake8) и запуск pytest из репозитория yamdb_final
