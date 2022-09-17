@@ -106,7 +106,7 @@ jobs:
           script: |
             cd ~
             cd ./yamdb_final
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest
+            sudo docker pull f0rt3hlulz/yamdb_final:latest
             sudo docker-compose stop
             sudo docker-compose rm web
             sudo docker-compose up -d
