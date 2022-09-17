@@ -1,0 +1,114 @@
+
+name: Django-app YamDB workflow
+
+on: [push]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+
+    - name: Install dependencies
+      run: | 
+        python -m pip install --upgrade pip 
+        pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
+        pip install -r api_yamdb/requirements.txt
+    - name: Test with flake8 and django tests
+      run: |
+        python -m flake8
+        python -m pytest
+        
+  build_and_push_app_to_docker_hub:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Docker
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          context: ./api_yamdb
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/infra_yam:latest
+          file: ./api_yamdb/Dockerfile
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/infra_yam:buildcache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/infra_yam:buildcache
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push_app_to_docker_hub
+    steps:
+      - name: executing remote ssh commands to deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+           
+            rm -rf yamdb_final
+            git clone ${{ secrets.REPOSITORY }}
+            cd yamdb_final/infra
+            touch .env
+            
+            echo EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }} >> .env
+            echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
+            echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
+            echo EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }} >> .env
+            echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
+            echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
+            
+            echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
+            echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+            echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+            echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+            
+            docker-compose -f docker-compose.yaml stop web
+            docker-compose -f docker-compose.yaml rm --force web
+            
+            docker pull ${{ secrets.DOCKER_USERNAME }}/infra_yam:latest
+            
+            docker-compose -f docker-compose.yaml up -d
+            
+            docker exec \
+              -t $(docker-compose -f docker-compose.yaml ps -q web) \
+              sh -c 'rm -rf /app/static/* /app/media/* && python3 manage.py collectstatic --no-input'
+
+send_message:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+    - name: send message
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          ${{ github.workflow }} fulfilled
+          
+          ${{ github.actor }} created commit:
+          Commit message: ${{ github.event.commits[0].message }}
+          
+          Repository: ${{ github.repository }}
+          
+          See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
