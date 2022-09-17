@@ -53,7 +53,6 @@ API развернут по адресу http://84.201.160.177/api/v1/
 * YaMDB отправляет письмо с кодом подтверждения (confirmation_code) на адрес email .
 * Пользователь отправляет запрос с параметрами email и confirmation_code на /auth/token/, в ответе на запрос ему приходит token (JWT-токен).
 * При желании пользователь отправляет PATCH-запрос на /users/me/ и заполняет поля в своём профайле (описание полей — в документации).
-[Полная документация API (redoc.yaml)](https://github.com/BolshakovAndrey/api_yamdb/blob/master/static/redoc.yaml)
 
 ## Установка на локальном компьютере
 Эти инструкции помогут вам создать копию проекта и запустить ее на локальном компьютере для целей разработки и тестирования.
@@ -82,11 +81,10 @@ DB_PORT=5432 # порт для подключения к БД
 ## Деплой на удаленный сервер
 
 Для запуска проекта на удаленном сервере необходимо:
-- скопировать на сервер файлы `docker-compose.yaml`, `.env` и папку `nginx` командами:
+- скопировать на сервер файлы `docker-compose.yaml` и папку `nginx` командами:
 ```
-scp docker-compose.yaml  <user>@<server-ip>:
-scp .env <user>@<server-ip>:
-scp -r nginx/ <user>@<server-ip>:
+scp docker-compose.yaml  <user>@<server-ip>:/docker-compose.yaml:
+scp -r nginx/ <user>@<server-ip>:/nginx/default.conf:
 
 ```
 
