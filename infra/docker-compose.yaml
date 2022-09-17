@@ -15,7 +15,7 @@ services:
       - ./.env
       
   web:
-    image: straga33/yamdb_final:latest
+    image: f0rt3hlulz/yamdb_final:latest
     restart: always
     volumes:
       - static_value:/app/static/

@@ -47,7 +47,7 @@ jobs:
         with:
           context: ./api_yamdb
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/infra_yam:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/infra_yamdb:latest
           file: ./api_yamdb/Dockerfile
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/infra_yam:buildcache,mode=max
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/infra_yam:buildcache
@@ -62,6 +62,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
           script: |
            
             rm -rf yamdb_final
@@ -79,7 +80,7 @@ jobs:
             docker-compose -f docker-compose.yaml stop web
             docker-compose -f docker-compose.yaml rm --force web
             
-            docker pull ${{ secrets.DOCKER_USERNAME }}/infra_yam:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/infra_yamdb:latest
             
             docker-compose -f docker-compose.yaml up -d
             
