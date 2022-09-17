@@ -1,9 +1,8 @@
 from csv import DictReader
+
 from django.core.management import BaseCommand
 from django.shortcuts import get_object_or_404
-
-from reviews.models import Genre, Title, GenreTitle
-
+from reviews.models import Genre, GenreTitle, Title
 
 ALREDY_LOADED_ERROR_MESSAGE = """
 Если вам нужно перезагрузить данные из CSV-файла,

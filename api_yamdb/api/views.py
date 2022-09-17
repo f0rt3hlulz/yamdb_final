@@ -1,31 +1,28 @@
 import uuid
 
+from api_yamdb.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action, api_view
-from rest_framework.mixins import (
-    CreateModelMixin, DestroyModelMixin, ListModelMixin
-)
-from rest_framework.pagination import (
-    LimitOffsetPagination, PageNumberPagination
-)
+from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
+                                   ListModelMixin)
+from rest_framework.pagination import (LimitOffsetPagination,
+                                       PageNumberPagination)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from reviews.filters import TitleFilter
 from reviews.models import Category, Genre, Review, Title, User
 
-from api_yamdb.settings import EMAIL_HOST_USER
-from api.permissions import (
-    AuthorOrReadOnly, IsAdmin, IsAdminOrReadOnly, ReadOnly
-)
-from api.serializers import (
-    CategorySerializer, CommentSerializer, GenreSerializer, ReviewSerializer,
-    SendCodeSerializer, TitleCreateSerializer, TitleSerializer,
-    CheckCodeSerializer, UserMeSerializer, UserSerializer
-)
+from api.permissions import (AuthorOrReadOnly, IsAdmin, IsAdminOrReadOnly,
+                             ReadOnly)
+from api.serializers import (CategorySerializer, CheckCodeSerializer,
+                             CommentSerializer, GenreSerializer,
+                             ReviewSerializer, SendCodeSerializer,
+                             TitleCreateSerializer, TitleSerializer,
+                             UserMeSerializer, UserSerializer)
 
 
 @api_view(['POST'])
