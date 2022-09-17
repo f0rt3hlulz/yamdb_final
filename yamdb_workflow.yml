@@ -1,4 +1,3 @@
-
 name: Django-app YamDB workflow
 
 on: [push]
@@ -24,7 +23,7 @@ jobs:
       run: |
         python -m flake8
         python -m pytest
-
+        
   build_and_push_app_to_docker_hub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
@@ -47,10 +46,10 @@ jobs:
         with:
           context: ./api_yamdb
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/infra_yam:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/infra_yamdb:latest
           file: ./api_yamdb/Dockerfile
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/infra_yam:buildcache,mode=max
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/infra_yam:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/infra_yamdb:buildcache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/infra_yamdb:buildcache
 
   deploy:
     runs-on: ubuntu-latest
@@ -62,6 +61,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
           script: |
            
             rm -rf yamdb_final
@@ -79,7 +79,7 @@ jobs:
             docker-compose -f docker-compose.yaml stop web
             docker-compose -f docker-compose.yaml rm --force web
             
-            docker pull ${{ secrets.DOCKER_USERNAME }}/infra_yam:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/infra_yamdb:latest
             
             docker-compose -f docker-compose.yaml up -d
             
@@ -87,21 +87,21 @@ jobs:
               -t $(docker-compose -f docker-compose.yaml ps -q web) \
               sh -c 'rm -rf /app/static/* /app/media/* && python3 manage.py collectstatic --no-input'
 
-send_message:
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-    - name: send message
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: |
-          ${{ github.workflow }} fulfilled
-          
-          ${{ github.actor }} created commit:
-          Commit message: ${{ github.event.commits[0].message }}
-          
-          Repository: ${{ github.repository }}
-          
-          See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+  send_message:
+      runs-on: ubuntu-latest
+      needs: deploy
+      steps:
+      - name: send message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ${{ github.workflow }} fulfilled
+            
+            ${{ github.actor }} created commit:
+            Commit message: ${{ github.event.commits[0].message }}
+            
+            Repository: ${{ github.repository }}
+            
+            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
