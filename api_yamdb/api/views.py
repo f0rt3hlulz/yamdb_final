@@ -1,5 +1,12 @@
 import uuid
-from api_yamdb.settings import EMAIL_HOST_USER
+
+from api.permissions import (AuthorOrReadOnly, IsAdmin, IsAdminOrReadOnly,
+                             ReadOnly)
+from api.serializers import (CategorySerializer, CheckCodeSerializer,
+                             CommentSerializer, GenreSerializer,
+                             ReviewSerializer, SendCodeSerializer,
+                             TitleCreateSerializer, TitleSerializer,
+                             UserMeSerializer, UserSerializer)
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
@@ -15,13 +22,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from reviews.filters import TitleFilter
 from reviews.models import Category, Genre, Review, Title, User
 
-from api.permissions import (AuthorOrReadOnly, IsAdmin, IsAdminOrReadOnly,
-                             ReadOnly)
-from api.serializers import (CategorySerializer, CheckCodeSerializer,
-                             CommentSerializer, GenreSerializer,
-                             ReviewSerializer, SendCodeSerializer,
-                             TitleCreateSerializer, TitleSerializer,
-                             UserMeSerializer, UserSerializer)
+from api_yamdb.settings import EMAIL_HOST_USER
 
 
 @api_view(['POST'])
