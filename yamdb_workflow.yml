@@ -92,7 +92,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           port: ${{ secrets.PORT }}
-          source: "infra/docker-compose.yaml, infra/.env, infra/redoc.yaml"
+          source: "infra/docker-compose.yaml, infra/.env"
           target: "/home/ftl/yamdb_final"
           strip_components: 1
     
@@ -106,7 +106,7 @@ jobs:
           script: |
             cd ~
             cd ./yamdb_final
-            sudo docker pull f0rt3hlulz/yamdb_final
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest
             sudo docker-compose stop
             sudo docker-compose rm web
             sudo docker-compose up -d
