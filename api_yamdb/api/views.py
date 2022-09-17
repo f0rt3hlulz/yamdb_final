@@ -1,5 +1,4 @@
 import uuid
-
 from api_yamdb.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
 from django.db.models import Avg
