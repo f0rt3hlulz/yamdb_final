@@ -1,4 +1,4 @@
-![Build Status](https://travis-ci.com/f0rt3hlulz/api_yamdb.svg?branch=master)](https://travis-ci.com/f0rt3hlulz/api_yamdb)
+[![Django-app workflow](https://github.com/f0rt3hlulz/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)](https://github.com/f0rt3hlulz/yamdb_final/actions/workflows/yamdb_workflow.yml)
 
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
