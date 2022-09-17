@@ -1,4 +1,4 @@
-![Build Status](https://travis-ci.com/f0rt3hlulz/api_yamdb.svg?branch=master)](https://travis-ci.com/BolshakovAndrey/api_yamdb)
+![Build Status](https://travis-ci.com/f0rt3hlulz/api_yamdb.svg?branch=master)](https://travis-ci.com/f0rt3hlulz/api_yamdb)
 ![Yamdb-app_workflow](https://github.com/f0rt3hlulz/yamdb_final/workflows/Yamdb-app_workflow/badge.svg)
 
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
