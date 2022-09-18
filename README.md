@@ -16,7 +16,7 @@
 - nginx
 - Docker
 
-API развернут по адресу http://84.201.160.177/api/v1/
+API развернут по адресу http://130.193.53.73/api/v1/
 
 # REST API для сервиса **YamDb** 
 версия c Docker, Continuous Integration на GitHub Actions
